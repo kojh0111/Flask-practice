@@ -66,26 +66,20 @@ def change_password():
 
     return "Change password Successfully"
 
+@app.route("/user/delete", methods=["DELETE"])
+def delete_account():
+    email = request.form.get("email")
+    password = request.form.get("password")
+    user = (
+        session.query(UserModel)
+        .filter(UserModel.email == email, UserModel.password == password)
+        .one_or_none()
+    )
+    if user is None:
+        return "Password is wrong"
+    session.delete(user)
+    session.commit()
+
+    return "Bye"
 
 app.run(debug=True)
-"""
-# Insert user
-user = UserModel("username", "1234", "JH", "jh@bo.b")
-session.add(user)
-
-# select user by name
-selected_users = session.query(UserModel).filter(UserModel.name == "bob").all()
-bob = session.query(UserModel).filter(UserModel.name == "bob").one_or_none()
-
-# Update password
-bob.password = "2345"
-session.add(bob)
-session.commit()
-
-# delete user by name
-jh = session.query(UserModel).filter(UserModel.name == "JH").one_or_none()
-session.delete(jh)
-
-session.commit()
-*/
-"""
