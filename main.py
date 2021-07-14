@@ -44,6 +44,29 @@ def signIn():
     return "Sign In Successfully"
 
 
+@app.route("/user/password", methods=["PATCH"])
+def change_password():
+    username = request.form.get("username")
+    password = request.form.get("password")
+    new_password = request.form.get("new_password")
+    user = (
+        session.query(UserModel)
+        .filter(UserModel.username == username, UserModel.password == password)
+        .one_or_none()
+    )
+    if user is None:
+        return "Password is wrong"
+
+    find_user = (
+        session.query(UserModel).filter(UserModel.username == username).one_or_none()
+    )
+    find_user.password = new_password
+    session.add(find_user)
+    session.commit()
+
+    return "Change password Successfully"
+
+
 app.run(debug=True)
 """
 # Insert user
