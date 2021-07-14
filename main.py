@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from model import Base
@@ -13,28 +13,38 @@ session = Session()
 app = Flask(__name__)
 
 
+@app.route("/signup", methods=["POST"])
 def signUp():
-    user = UserModel("username", "1234", "JH", "jh@bo.b")
+    username = request.form.get("username")
+    password = request.form.get("password")
+    name = request.form.get("name")
+    email = request.form.get("email")
+
+    user = UserModel(username, password, name, email)
     session.add(user)
     session.commit()
 
     return "Sign Up Successfully"
 
 
+@app.route("/signin", methods=["POST"])
 def signIn():
-    username = "username"
-    password = "password"
+    username = request.form.get("username")
+    password = request.form.get("password")
     user = (
         session.query(UserModel)
-        .filter(UserModel.username == username, UserModel.password == password)
+        .filter(
+            UserModel.username == username, UserModel.password == password
+        )  # SQL WHERE문
         .one_or_none()
     )
     if user is None:
         return "No User"
 
-    return jsonify(user)
+    return "Sign In Successfully"
 
 
+app.run(debug=True)
 """
 # Insert user
 user = UserModel("username", "1234", "JH", "jh@bo.b")
