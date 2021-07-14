@@ -1,3 +1,4 @@
+from flask import Flask, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from model import Base
@@ -9,6 +10,32 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
+app = Flask(__name__)
+
+
+def signUp():
+    user = UserModel("username", "1234", "JH", "jh@bo.b")
+    session.add(user)
+    session.commit()
+
+    return "Sign Up Successfully"
+
+
+def signIn():
+    username = "username"
+    password = "password"
+    user = (
+        session.query(UserModel)
+        .filter(UserModel.username == username, UserModel.password == password)
+        .one_or_none()
+    )
+    if user is None:
+        return "No User"
+
+    return jsonify(user)
+
+
+"""
 # Insert user
 user = UserModel("username", "1234", "JH", "jh@bo.b")
 session.add(user)
@@ -27,3 +54,5 @@ jh = session.query(UserModel).filter(UserModel.name == "JH").one_or_none()
 session.delete(jh)
 
 session.commit()
+*/
+"""
