@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask.wrappers import Response
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from model import Base
@@ -15,22 +16,29 @@ app = Flask(__name__)
 
 @app.route("/signup", methods=["POST"])
 def signUp():
-    username = request.form.get("username")
-    password = request.form.get("password")
-    name = request.form.get("name")
-    email = request.form.get("email")
+    username = request.form["username"]
+    password = request.form["password"]
+    name = request.form["name"]
+    email = request.form["email"]
+
+    find_user = (
+        session.query(UserModel).filter(UserModel.username == username).one_or_none()
+    )
+
+    if find_user is not None:
+        return "You can't create account. There is a same username."
 
     user = UserModel(username, password, name, email)
     session.add(user)
     session.commit()
 
-    return "Sign Up Successfully"
+    return Response("Sign Up Successfully", status=201)
 
 
 @app.route("/signin", methods=["POST"])
 def signIn():
-    username = request.form.get("username")
-    password = request.form.get("password")
+    username = request.form["username"]
+    password = request.form["password"]
     user = (
         session.query(UserModel)
         .filter(
@@ -46,9 +54,9 @@ def signIn():
 
 @app.route("/user/password", methods=["PATCH"])
 def change_password():
-    username = request.form.get("username")
-    password = request.form.get("password")
-    new_password = request.form.get("new_password")
+    username = request.form["username"]
+    password = request.form["password"]
+    new_password = request.form["new_password"]
     user = (
         session.query(UserModel)
         .filter(UserModel.username == username, UserModel.password == password)
@@ -66,8 +74,8 @@ def change_password():
 
 @app.route("/user/delete", methods=["DELETE"])
 def delete_account():
-    email = request.form.get("email")
-    password = request.form.get("password")
+    email = request.form["email"]
+    password = request.form["password"]
     user = (
         session.query(UserModel)
         .filter(UserModel.email == email, UserModel.password == password)
