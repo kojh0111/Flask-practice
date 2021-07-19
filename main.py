@@ -26,7 +26,9 @@ def signUp():
     )
 
     if find_user is not None:
-        return "You can't create account. There is a same username."
+        return Response(
+            "You can't create account. There is a same username.", status=400
+        )
 
     user = UserModel(username, password, name, email)
     session.add(user)
@@ -64,7 +66,8 @@ def change_password():
     )
     if user is None:
         return "Password is wrong"
-
+    if user.password == new_password:
+        return Response("You can't use same password", status=400)
     user.password = new_password
     session.add(user)
     session.commit()
