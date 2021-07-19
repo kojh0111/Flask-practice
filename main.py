@@ -57,14 +57,12 @@ def change_password():
     if user is None:
         return "Password is wrong"
 
-    find_user = (
-        session.query(UserModel).filter(UserModel.username == username).one_or_none()
-    )
-    find_user.password = new_password
-    session.add(find_user)
+    user.password = new_password
+    session.add(user)
     session.commit()
 
     return "Change password Successfully"
+
 
 @app.route("/user/delete", methods=["DELETE"])
 def delete_account():
@@ -81,5 +79,6 @@ def delete_account():
     session.commit()
 
     return "Bye"
+
 
 app.run(debug=True)
