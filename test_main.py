@@ -44,5 +44,21 @@ class TestSignUp(unittest.TestCase):
         )
         self.assertIsNotNone(user)
 
+    def test_exist_username(self):
+        user = UserModel("fdsa", "fdsa", "fdsa", "adfdd@asd.ds")
+        session.add(user)
+        session.commit()
+
+        response = self.test_app.post(
+            "/signup",
+            json={
+                "username": "fdsa",
+                "password": "fdsa",
+                "name": "fdsa",
+                "email": "adfdd@asd.ds",
+            },
+        )
+        self.assertEqual(400, response.status_code)
+
 
 unittest.main()
