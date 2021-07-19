@@ -16,10 +16,10 @@ app = Flask(__name__)
 
 @app.route("/signup", methods=["POST"])
 def signUp():
-    username = request.form["username"]
-    password = request.form["password"]
-    name = request.form["name"]
-    email = request.form["email"]
+    username = request.json["username"]
+    password = request.json["password"]
+    name = request.json["name"]
+    email = request.json["email"]
 
     find_user = (
         session.query(UserModel).filter(UserModel.username == username).one_or_none()
@@ -39,8 +39,8 @@ def signUp():
 
 @app.route("/signin", methods=["POST"])
 def signIn():
-    username = request.form["username"]
-    password = request.form["password"]
+    username = request.json["username"]
+    password = request.json["password"]
     user = (
         session.query(UserModel)
         .filter(
@@ -56,9 +56,9 @@ def signIn():
 
 @app.route("/user/password", methods=["PATCH"])
 def change_password():
-    username = request.form["username"]
-    password = request.form["password"]
-    new_password = request.form["new_password"]
+    username = request.json["username"]
+    password = request.json["password"]
+    new_password = request.json["new_password"]
     user = (
         session.query(UserModel)
         .filter(UserModel.username == username, UserModel.password == password)
@@ -77,8 +77,8 @@ def change_password():
 
 @app.route("/user/delete", methods=["DELETE"])
 def delete_account():
-    email = request.form["email"]
-    password = request.form["password"]
+    email = request.json["email"]
+    password = request.json["password"]
     user = (
         session.query(UserModel)
         .filter(UserModel.email == email, UserModel.password == password)
@@ -92,4 +92,5 @@ def delete_account():
     return "Bye"
 
 
-app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)
